@@ -50,3 +50,38 @@ plt.title("Contagem relativa de doenças do coração em idosos, por estado (PNS
 plt.xlabel("Estado")
 plt.ylabel("% de idosos com a doença")
 plt.show()
+
+# Por região
+
+regioes = {
+    11: "Norte", 12: "Norte", 13: "Norte", 14: "Norte", 15: "Norte",
+    16: "Norte", 17: "Norte", 21: "Nordeste", 22: "Nordeste", 23: "Nordeste",
+    24: "Nordeste", 25: "Nordeste", 26: "Nordeste", 27: "Nordeste", 28: "Nordeste",
+    29: "Nordeste", 31: "Sudeste", 32: "Sudeste", 33: "Sudeste", 35: "Sudeste",
+    41: "Sul", 42: "Sul", 43: "Sul", 50: "Centro-Oeste", 51: "Centro-Oeste",
+    52: "Centro-Oeste", 53: "Centro-Oeste"
+}
+df_idosos["regiao"] = df_idosos["uf"].map(regioes)
+df_idosos_doentes = df_idosos[df_idosos["tem_doencas_do_coracao"] == 1].copy() # Recria a base de dados
+
+contagem_regiao = df_idosos_doentes["regiao"].value_counts(ascending=True) # conta quantos casos tem em cada estado
+
+plt.figure(figsize=(12, 6))
+sns.countplot(data = df_idosos_doentes, x="regiao", order=contagem_regiao.index)
+plt.title("Contagem absoluta de doenças do coração em idosos, por região (PNS 2019)")
+plt.xlabel("Região")
+plt.ylabel("Número de casos")
+plt.show()
+
+# Relativo
+r_total_regiao = df_idosos.groupby("regiao").size()
+r_casos_regiao = df_idosos_doentes.groupby("regiao").size()
+relativo_regiao = (r_casos_regiao / r_total_regiao)*100
+relativo_regiao = relativo_regiao.sort_values(ascending = True)
+
+plt.figure(figsize=(12, 6))
+sns.barplot(x = relativo_regiao.index, y = relativo_regiao.values)
+plt.title("Contagem relativa de doenças do coração em idosos, por região (PNS 2019)")
+plt.xlabel("Região")
+plt.ylabel("% de idosos com a doença")
+plt.show()
